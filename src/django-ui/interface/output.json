@@ -1,0 +1,463 @@
+[
+    {
+        "pk": 1,
+        "model": "specification.state",
+        "fields": {
+            "initialization_function": "0",
+            "name": "AGE",
+            "description": "age of an individual in years"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "specification.state",
+        "fields": {
+            "initialization_function": "0",
+            "name": "ALIVE",
+            "description": "individual is alive if this is true"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "specification.state",
+        "fields": {
+            "initialization_function": "0",
+            "name": "HIV",
+            "description": "individual has HIV"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "specification.state",
+        "fields": {
+            "initialization_function": "0",
+            "name": "SEX",
+            "description": "female (0) or male (1)"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "specification.state",
+        "fields": {
+            "initialization_function": "0",
+            "name": "TB",
+            "description": "individual has tuberculosis if this is true"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 1,
+            "description": "",
+            "value": 0.0,
+            "probability": 1.0
+        }
+    },
+    {
+        "pk": 2,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 2,
+            "description": "",
+            "value": 1.0,
+            "probability": 1.0
+        }
+    },
+    {
+        "pk": 7,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 5,
+            "description": "HIV-negative",
+            "value": 0.0,
+            "probability": 0.9
+        }
+    },
+    {
+        "pk": 8,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 5,
+            "description": "HIV-positive",
+            "value": 1.0,
+            "probability": 0.1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 4,
+            "description": "",
+            "value": 0.49,
+            "probability": 0.0
+        }
+    },
+    {
+        "pk": 6,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 4,
+            "description": "",
+            "value": 0.51,
+            "probability": 1.0
+        }
+    },
+    {
+        "pk": 3,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 3,
+            "description": "",
+            "value": 0.0,
+            "probability": 0.99
+        }
+    },
+    {
+        "pk": 4,
+        "model": "specification.specifiedinitialvalue",
+        "fields": {
+            "state": 3,
+            "description": "",
+            "value": 1.0,
+            "probability": 0.01
+        }
+    },
+    {
+        "pk": 1,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "increments AGE if individual is alive",
+            "value_time_period": 365.25,
+            "probability": 1.0,
+            "probability_normalize_function": "0",
+            "value_normalize_function": "1",
+            "state": 1,
+            "assign_function": "IN",
+            "position": 0,
+            "new_value": 1.0,
+            "probability_time_period": 1.0
+        }
+    },
+    {
+        "pk": 2,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "infants (under 1)",
+            "value_time_period": 1.0,
+            "probability": 0.004,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 0,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 3,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "children from 1- 5",
+            "value_time_period": 1.0,
+            "probability": 0.001,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 10,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 4,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "children 5-18",
+            "value_time_period": 1.0,
+            "probability": 0.0001,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 20,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 8,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "females age 18-22 with TB",
+            "value_time_period": 1.0,
+            "probability": 0.2,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 30,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 6,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "females age 18-22",
+            "value_time_period": 1.0,
+            "probability": 0.001,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 40,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 7,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "male 18-22 with TB",
+            "value_time_period": 1.0,
+            "probability": 0.05,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 50,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 5,
+        "model": "specification.transitionrecord",
+        "fields": {
+            "description": "males 18-22",
+            "value_time_period": 1.0,
+            "probability": 0.002,
+            "probability_normalize_function": "2",
+            "value_normalize_function": "0",
+            "state": 2,
+            "assign_function": "AS",
+            "position": 60,
+            "new_value": 0.0,
+            "probability_time_period": 365.25
+        }
+    },
+    {
+        "pk": 1,
+        "model": "specification.entry",
+        "fields": {
+            "upper": null,
+            "lower": 1.0,
+            "description": "Only apply to living individuals",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 1
+        }
+    },
+    {
+        "pk": 12,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 2
+        }
+    },
+    {
+        "pk": 2,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 1.0,
+            "lower": 0.0,
+            "description": "infants",
+            "state": 1,
+            "match_function": "GTE_LT",
+            "position": 1,
+            "transition_record": 2
+        }
+    },
+    {
+        "pk": 13,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 3
+        }
+    },
+    {
+        "pk": 3,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 5.0,
+            "lower": 1.0,
+            "description": "children under 5",
+            "state": 1,
+            "match_function": "GTE_LT",
+            "position": 1,
+            "transition_record": 3
+        }
+    },
+    {
+        "pk": 14,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 4
+        }
+    },
+    {
+        "pk": 4,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 18.0,
+            "lower": 5.0,
+            "description": "children 5 to 18",
+            "state": 1,
+            "match_function": "GTE_LT",
+            "position": 1,
+            "transition_record": 4
+        }
+    },
+    {
+        "pk": 9,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 22.0,
+            "lower": 18.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "GTE_LT",
+            "position": 0,
+            "transition_record": 8
+        }
+    },
+    {
+        "pk": 10,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "female",
+            "state": 4,
+            "match_function": "EQ",
+            "position": 1,
+            "transition_record": 8
+        }
+    },
+    {
+        "pk": 11,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "tb",
+            "state": 3,
+            "match_function": "EQ",
+            "position": 2,
+            "transition_record": 8
+        }
+    },
+    {
+        "pk": 16,
+        "model": "specification.entry",
+        "fields": {
+            "upper": null,
+            "lower": 1.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 6
+        }
+    },
+    {
+        "pk": 8,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 22.0,
+            "lower": 18.0,
+            "description": "age 18-22",
+            "state": 1,
+            "match_function": "GTE_LT",
+            "position": 1,
+            "transition_record": 6
+        }
+    },
+    {
+        "pk": 7,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "female",
+            "state": 4,
+            "match_function": "EQ",
+            "position": 2,
+            "transition_record": 6
+        }
+    },
+    {
+        "pk": 6,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 0.0,
+            "lower": 1.0,
+            "description": "males",
+            "state": 4,
+            "match_function": "EQ",
+            "position": 0,
+            "transition_record": 5
+        }
+    },
+    {
+        "pk": 5,
+        "model": "specification.entry",
+        "fields": {
+            "upper": 22.0,
+            "lower": 18.0,
+            "description": "adults aged 18-12",
+            "state": 1,
+            "match_function": "GTE_LT",
+            "position": 1,
+            "transition_record": 5
+        }
+    },
+    {
+        "pk": 15,
+        "model": "specification.entry",
+        "fields": {
+            "upper": null,
+            "lower": 1.0,
+            "description": "alive",
+            "state": 2,
+            "match_function": "EQ",
+            "position": 2,
+            "transition_record": 5
+        }
+    }
+]
