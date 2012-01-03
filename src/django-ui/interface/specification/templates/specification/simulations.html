@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% load i18n %}
+
+{% block title %}{{block.super}} - Open or create a simulation{% endblock %}
+
+{% block content %}
+
+{{block.super}}
+
+<div id="simulations">
+
+<h2>Open or Create a Simulation</h2>
+
+<div id="new-simulation">
+<form action="{% url 'dashboard' 0 %}" method="post">{% csrf_token %}
+<input type="submit" value="New simulation" />
+</form> 
+</div>
+
+<div id="existing-simulations">
+<p>{% trans "Simulations" %}</p>
+<ul>
+{% for simulation in simulations %}
+  
+  <li><a href="{% url 'dashboard' simulation.pk %}">{{simulation.name}}</a>
+  {% if not simulation.editable %}
+    ({% trans "read only" %})
+  {% endif %}  
+  </li>
+
+{% endfor %}
+</ul>
+</div>
+
+</div>
+
+{% include 'logout_snippet.html' %}
+
+{% endblock %}
+

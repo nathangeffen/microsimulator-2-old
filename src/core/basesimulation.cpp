@@ -26,6 +26,28 @@ using namespace microsimulator;
 const double DEFAULT_TRANSITION_PROBABILITY = 0.009;
 const double DEFAULT_TRANSITION_BACK_PROBABILITY = 0.7;
 
+BaseSimulation::BaseSimulation(QString name,
+                               int nIndividuals,
+                               int nIterations,
+                               double timePeriod)
+{
+  this->stateCounter_ = 0;
+  this->setName( name );
+  this->setPopulation( nIndividuals );
+  this->setTimePeriod( timePeriod );
+}
+
+
+BaseSimulation::~BaseSimulation()
+{
+  for (auto index : statesToDelete_) {
+    delete states_[index];
+  }
+}
+
+
+
+
 void BaseSimulation::loadStates(const QByteArray& inputTable,
                                 const SimulationFormat& tableFormat)
 {
@@ -83,6 +105,8 @@ void BaseSimulation::loadStatesFromJsonTable(const QByteArray& inputTable)
       this->loadJsonTransitionRecord(fields);
     } else if ( model == "specification.entry" ) {
       this->loadJsonEntry(fields);
+    } else if ( model == "specification.simulation" ) {
+      // Do nothing
     } else if ( model == "" ){
       throw SimulationException("Missing model name in Json file",
                                       __LINE__, __FILE__);
@@ -104,10 +128,10 @@ void BaseSimulation::loadJsonState(const QMap< QString, QVariant >& fields)
 
 void BaseSimulation::loadJsonInitialValue(const QMap< QString, QVariant >& fields)
 {
-  int pk = fields[ "pk" ].toInt();
   QMap<QString, QVariant> subfields = fields[ "fields" ].toMap();
+  int statePk = subfields[ "state" ].toInt();
   StateTransitionTable* state = static_cast< StateTransitionTable* >
-                                  ( states_[ pkToState_[ pk ] ] );
+                                  ( states_[ pkToState_[ statePk ] ] );
   state->addInitialValue(subfields);
 }
 
@@ -143,12 +167,6 @@ void BaseSimulation::loadJsonEntry(const QMap< QString, QVariant>& fields)
 
 void BaseSimulation::prepare()
 {
-
-  // If there are no states, insert a default StateAge
-
-  if (states_.size() == 0) {
-    addState("age", new StateAge(), true);
-  }
 
   // Prepare states
   for ( auto itState : states_ ) {
@@ -220,7 +238,13 @@ AnalysisOutput BaseSimulation::analyze()
 
 // Getters and setters
 
-int BaseSimulation::getIndividuals() const
+
+QString BaseSimulation::getName() const
+{
+  return name_;
+}
+
+int BaseSimulation::getPopulation() const
 {
   return nIndividuals_;
 }
@@ -235,7 +259,12 @@ double BaseSimulation::getTimePeriod() const
   return timePeriod_;
 }
 
-void BaseSimulation::setIndividuals(int nIndividuals_)
+void BaseSimulation::setName(QString name)
+{
+  this->name_ = name;
+}
+
+void BaseSimulation::setPopulation(int nIndividuals_)
 {
   this->nIndividuals_ = nIndividuals_;
 }
@@ -275,9 +304,18 @@ void BaseSimulation::addAnalysisDescriptor(
       stateIndex, analysisFunction, filters));
 }
 
-BaseSimulation::~BaseSimulation()
+void BaseSimulation::print() const
 {
-  for (auto index : statesToDelete_) {
-    delete states_[index];
+
+  cout << "-----------------------" << endl;
+  cout << "Simulation: " << this->getName().toStdString() << endl;
+  cout << "Population size: " << this->getPopulation() << endl;
+  cout << "Time period: " << this->getTimePeriod() << endl;
+  cout << "Iterations:" << this->getIterations() << endl;
+  cout << "States" << endl;
+  cout << "Number entries: " << states_.size() << endl;
+  for (auto state : states_) {
+    state->print(states_);
   }
+  cout << "-----------------------" << endl;
 }

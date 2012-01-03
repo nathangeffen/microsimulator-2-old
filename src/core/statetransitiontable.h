@@ -80,7 +80,7 @@ public:
                             IndividualVector& individuals,
                             Individual& individual);
   virtual double initialize();
-
+  virtual void print(const StateVector& states) const;
 protected:
   vector < InitialValue > initialValues_;
   vector < TransitionRecord > transitionTable_;

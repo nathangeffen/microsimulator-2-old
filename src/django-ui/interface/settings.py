@@ -1,4 +1,3 @@
-# Django settings for interface project.
 import os
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -15,7 +14,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'interface.sqlite',      # Or path to database file if using sqlite3.
+        'NAME': 'microsimulator.sqlite',      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -111,6 +110,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates'),    
+    os.path.join(SITE_ROOT, 'dashboard/templates'),
 )
 
 INSTALLED_APPS = (
@@ -121,13 +122,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'grappelli',    
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
     'south',
-    'specification',
+    'registration',    
+    'specification',    
 )
+
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

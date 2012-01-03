@@ -1,5 +1,5 @@
 from specification.models import State, TransitionRecord, Entry, \
-    SpecifiedInitialValue, InitializationFunctionParameter
+    SpecifiedInitialValue, InitializationFunctionParameter, Simulation
      
 from django.contrib import admin
 from django.utils.translation import ugettext as _
@@ -17,6 +17,12 @@ class EntryInline(admin.TabularInline):
     model = Entry
     extra = 0
     sortable_field_name = 'position'    
+
+class StateInline(admin.TabularInline):
+    model = State
+
+class SimulationAdmin(admin.ModelAdmin):
+    raw_id_fields = ['owner',]
 
 class TransitionRecordAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -51,5 +57,6 @@ class StateAdmin(admin.ModelAdmin):
     inlines = [SpecifiedInitialValueInline, 
                InitializationFunctionParameterInline,]
 
+admin.site.register(Simulation, SimulationAdmin)
 admin.site.register(State, StateAdmin)
 admin.site.register(TransitionRecord, TransitionRecordAdmin)

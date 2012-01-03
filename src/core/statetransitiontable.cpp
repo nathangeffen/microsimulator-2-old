@@ -11,6 +11,8 @@
 #include <QFile>
 #include <qjson/parser.h>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include "simutils.h"
 #include "statetransitiontable.h"
@@ -190,7 +192,8 @@ void StateTransitionTable::prepare(double toTimePeriod)
     if ( sumProbability != 1.0 ) {
       QString s;
       s.setNum(sumProbability, 'g', 2);
-      s = "Cumulative probability of all initial values equals " + s + " not 1";
+      s = "Cumulative probability of all initial values equals " + s + " not 1"
+          + " for state " + this->getName().toStdString().c_str();
       throw SimulationException(s.toStdString().c_str(),
                                 __LINE__, __FILE__);
     }
@@ -217,5 +220,93 @@ void StateTransitionTable::prepare(double toTimePeriod)
       record.normalizedProbability = record.probability;
     }
 
+  }
+}
+
+string assignString(AssignFunction f)
+{
+  return (f == ASSIGN) ? "=" : "+";
+}
+
+string normalizeString(NormalizeFunction f)
+{
+  if (f == normalize_linear_proportion)
+    return "linear";
+  if (f == normalize_compounded_proportion)
+    return "compounded";
+  if (f == normalize_identity)
+    return "None";
+  return "Unknown";
+}
+
+string matchFunctionString(MatchFunction f, double lower, double upper)
+{
+  stringstream s;
+  switch(f) {
+  case EQ:
+    s << lower;
+    break;
+  case GTE_LTE:
+    s << "[" << lower << ";" << upper << "]";
+    break;
+  case GTE_LT:
+    s << "[" << lower << ";" << upper << ")";
+    break;
+  case GT_LTE:
+    s << "(" << lower << ";" << upper << "]";
+    break;
+  case GT_LT:
+    s << "(" << lower << ";" << upper << ")";
+    break;
+  }
+  return s.str();
+}
+
+void StateTransitionTable::print(const StateVector& states) const
+{
+  State::print(states);
+  if ( initialValues_.size() ) {
+    cout << "Initial Values" << endl;
+    cout << "Value" << setw(12) << "Probability" << endl;
+    for ( auto initialValue : initialValues_ ) {
+      cout << initialValue.value << setw(12) << initialValue.probability << endl;
+    }
+  }
+  else {
+   cout << "No Initial Values" << endl;
+  }
+
+  if ( transitionTable_.size() ) {
+    cout << "Transition Records" << endl;
+    cout << "Value" << setw(12)
+         << "Assign" << setw(12)
+         << "Time" << setw(12)
+         << "Normalize" << setw(12)
+         << "Probability" << setw(12)
+         << "Prob Time" << setw(12)
+         << "Prob Norm" << endl;
+    for ( auto transitionRecord : transitionTable_ ) {
+      cout << transitionRecord.newValue << setw(12)
+           << assignString(transitionRecord.assignFunction) << setw(12)
+           << transitionRecord.valueTimePeriod << setw(12)
+           << normalizeString(transitionRecord.valueNormalizeFunction) << setw(12)
+           << transitionRecord.probability << setw(12)
+           << transitionRecord.probabilityTimePeriod << setw(12)
+           << normalizeString(transitionRecord.probabilityNormalizeFunction)
+           << endl;
+      if ( transitionRecord.entries.size() ) {
+        cout << "Conditions" << endl;
+        for ( auto condition : transitionRecord.entries ) {
+          cout << states.at(condition.stateIndex)->getName().toStdString()
+               << ": "
+               << matchFunctionString(condition.matchFunction,
+                                      condition.lower,
+                                      condition.upper)
+              << endl;
+        }
+      }
+    }
+  } else {
+   cout << "No transition records" << endl;
   }
 }

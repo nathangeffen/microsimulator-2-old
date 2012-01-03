@@ -117,3 +117,8 @@ FilterFunctionList* State::getFilterFunctions()
 {
   return &filterFunctions_;
 }
+
+void State::print(const StateVector& states) const
+{
+  cout << this->getName().toStdString() << endl;
+}

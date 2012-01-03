@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% load i18n %}
+
+{% block title %}{{block.super}} - Dashboard{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+<script type="text/javascript">
+
+function updateElementIndex(el, prefix, ndx) {
+    var id_regex = new RegExp('(' + prefix + '-\\d+)');
+    var replacement = prefix + '-' + ndx;
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+    if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+}   
+
+function addForm(btn, prefix) {
+    var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    var row = $('.dynamic-form:first').clone(true).get(0);
+    $(row).removeAttr('id').insertAfter($('.dynamic-form:last')).children('.hidden').removeClass('hidden');
+    $(row).children().not(':last').children().each(function() {
+      updateElementIndex(this, prefix, formCount);
+      $(this).val('');
+    });
+    $(row).find('.delete-row').click(function() {
+      deleteForm(this, prefix);
+    });
+    $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+    return false;
+}
+
+function deleteForm(btn, prefix) {
+    $(btn).parents('.dynamic-form').remove();
+    var forms = $('.dynamic-form');
+    $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+    for (var i=0, formCount=forms.length; i<formCount; i++) {
+      $(forms.get(i)).children().not(':last').children().each(function() {
+          updateElementIndex(this, prefix, i);
+      });
+    }
+    return false;
+}
+
+$(function () {
+    $('.add-row').click(function() {
+          return addForm(this, 'form');
+          });
+    $('.delete-row').click(function() {
+          return deleteForm(this, 'form');
+        })
+})
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+{{block.super}}
+
+<div id="dashboard">
+
+<h2>Dashboard</h2>
+
+<div id="simulation-form">
+
+<table>
+{{simulationForm}}
+</table>
+
+    <table id="id_forms_table" border="0" cellpadding="0" cellspacing="5">
+        <thead>
+          <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Initialization Function</th>
+              <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in stateFormset.forms %}
+          <tr id="{{ form.prefix }}-row" class="dynamic-form">
+              <td>{{ form.name }}</td>
+              <td>{{ form.description }}</td>
+              <td>{{ form.initialization_function }}</td>
+              <td>{% if forloop.last %}{% else %}
+                <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)" 
+                class="delete-row">Remove</a>{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+            <tr>
+              <td colspan="4"><a href="javascript:void(0)" class="add-row">add property</a></td>
+          </tr>
+        </tbody>
+    </table>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+
+</div>
+<p>{% trans "Choose simulation outputs" %}</p>
+<p>{% trans "Run simulation" %}</p>
+<p>{% trans "Previous simulation runs" %}</p>
+<p>{% trans "Open a simulation" %}</p>
+<p>{% trans "Create a new simulation" %}</p> 
+
+</div>
+
+{% include 'logout_snippet.html' %}
+
+{% endblock %}
+

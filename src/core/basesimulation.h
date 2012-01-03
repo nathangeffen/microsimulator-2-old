@@ -31,15 +31,10 @@ const FilterFunctionList emptyFilterFunctionVector;
 class BaseSimulation
 {
 public:
-  BaseSimulation (int nIndividuals=defaultNumberIndividuals,
-                  int nIterations=defaultNumberIterations,
-                  double timePeriod=YEAR,
-                  const StateVector& states=emptyStateVector) :
-    nIndividuals_(nIndividuals),
-    nIterations_(nIterations),
-    timePeriod_(timePeriod),
-    states_(states),
-    stateCounter_(0) {};
+  BaseSimulation (QString name = "",
+                  int nIndividuals = 1000,
+                  int nIterations = 70,
+                  double timePeriod = 365.25);
   virtual ~BaseSimulation();
 
   virtual void prepare();
@@ -51,7 +46,8 @@ public:
   void loadStates(QFile& inputFile, const SimulationFormat& tableFormat);
 
   // Getters and setters
-  int getIndividuals() const;
+  QString getName() const;
+  int getPopulation() const;
   int getIterations() const;
   double getTimePeriod() const;
   ParameterMap getParameters() const;
@@ -59,7 +55,8 @@ public:
   double getParameterNormalizedValue(QString name) const;
   double getParameterTimePeriod(string name) const;
 
-  void setIndividuals(int nIndividuals_);
+  void setName(QString name);
+  void setPopulation(int nIndividuals_);
   void setIterations(int nIterations_);
   void setTimePeriod(double timePeriod_);
   int addState(QString name, State* const state, bool markForDeletion=false);
@@ -68,6 +65,7 @@ public:
                              AnalysisFunction function,
                              FilterFunctionList filters=
                                                      emptyFilterFunctionVector);
+  virtual void print() const;
 
 protected:
   void loadStatesFromJsonTable(const QByteArray& inputTable);
@@ -84,6 +82,7 @@ protected:
   vector<int> statesToDelete_;
   AnalysisDescriptorVector analysisDescriptors_;
 private:
+  QString name_;
   int stateCounter_;
   map < int, int > pkToState_;
   map < int, int > transitionPktoState_;

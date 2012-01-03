@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   BaseSimulation s1;
 
   if (argc < 3) {
-    cout << argv[0] << "<number of individuals> <number of iterations> "
+    cout << argv[0] << " <number of individuals> <number of iterations> "
          << "<iteration period in days>" << endl;
     return 1;
   }
@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
   cout << "Iterations: " << nIterations << endl;
   cout << "Time Period: " << timePeriod << endl;
 
+  s1.setName("Test simulation");
   QFile inputFile( "testinput.json");
   s1.loadStates(inputFile, JSONTEXT);
 
@@ -59,8 +60,10 @@ int main(int argc, char *argv[]) {
   age.registerRequiredState("alive", alive.getId());
 
   s1.setTimePeriod(timePeriod);
-  s1.setIndividuals(nIndividuals);
+  s1.setPopulation(nIndividuals);
   s1.setIterations(nIterations);
+
+  s1.print();
 
   cout << "Preparing tb simulation" << endl;
   s1.prepare();

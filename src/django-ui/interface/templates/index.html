@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% load i18n %}
+
+{% block title %}{{block.super}} - Home{% endblock %}
+
+{% block content %}
+
+{{block.super}}
+
+{% if user.is_authenticated %}
+
+  <p>
+  <a href="{% url 'simulations' %}">{% trans "Simulations" %}</a>
+  </p>
+  <p><a href="{% url 'django.contrib.auth.views.logout' %}">{% trans "Logout" %}
+  </a>
+  </p>  
+
+{% else %}
+
+  <p><a href="{% url 'django.contrib.auth.views.login' %}?next={% url 'home' %}">{% trans "Login" %}</a></p>
+  <p><a href="{% url 'registration.views.register' %}?next={% url 'home' %}">{% trans "Register" %}</a></p>
+
+{% endif %}
+
+{% endblock %}

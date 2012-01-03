@@ -60,6 +60,7 @@ public:
   QString getName() const;
   int getId() const;
   FilterFunctionList* getFilterFunctions();
+  virtual void print(const StateVector& states) const;
 
 protected:
   InitializeFunction initializeFunction_;

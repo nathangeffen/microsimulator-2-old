@@ -1,8 +1,12 @@
 from django.db import models
-
-# Create your models here.
-
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
+
+PUBLIC_STATUS = (
+    ("P", _("This is a private simulation")),                 
+    ("RW", _("Anyone can edit this simulation")),
+    ("R", _("Anyone can view this simulation (but not edit it)")), 
+)
 
 MATCH_FUNCTIONS = (
     ("EQ", _("== - Equals")),
@@ -28,7 +32,23 @@ INITIALIZATION_FUNCTIONS = (
     ("1", _('Undefined')),
 )
 
+class Simulation(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, blank=True)
+    public_status = models.CharField(max_length=2, choices=PUBLIC_STATUS,
+                                     default='P')
+    owner = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = _('Simulation')
+        verbose_name_plural = _('Simulations')
+        ordering = ['name',]    
+
 class State(models.Model):
+    simulation = models.ForeignKey(Simulation)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
     initialization_function = models.CharField(max_length=3, 

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% load i18n %}
+
+{% block title %}{{block.super}} - Dashboard{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+
+{{block.super}}
+
+<div id="dashboard">
+
+<h2>Dashboard</h2>
+
+<div id="simulation-form">
+
+<fieldset class="module aligned ">
+{% for field in simulationform %}
+    <div class="form-row">
+            <div class="field-box">
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+            </div>
+    </div>
+{% endfor %}
+</fieldset>
+
+<fieldset class="module aligned ">
+<h3>States</h3>
+<table>
+     <tr>
+     {% for field in stateformset.forms.0 %}
+          {% if not field.is_hidden %}
+               <th>{{ field.label }}</th>
+          {% endif %}
+     {% endfor %}
+     </tr>
+     {% for f in stateformset.management_form %}
+          {{ f }}
+     {% endfor %}
+     {% for f in stateformset.forms %}
+          <tr>
+          {% for field in f %}
+               {% if not field.is_hidden %}
+                    <td>
+                    {{ field.errors }}
+                    {{ field }}
+                    </td>
+               {% else %}
+                    <td valign="bottom">{{ field }}</
+               {% endif %}
+          {% endfor %}
+          </tr>
+     {% endfor %}
+</table>
+</fieldset>
+
+
+</div>
+
+{% include 'logout_snippet.html' %}
+
+{% endblock %}
+
