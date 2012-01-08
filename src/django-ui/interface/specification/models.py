@@ -2,12 +2,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 
-PUBLIC_STATUS = (
-    ("P", _("This is a private simulation")),                 
-    ("RW", _("Anyone can edit this simulation")),
-    ("R", _("Anyone can view this simulation (but not edit it)")), 
-)
-
 MATCH_FUNCTIONS = (
     ("EQ", _("== - Equals")),
     ("GTE_LTE", _(">= && <= - Greater than or equal to and less than or equal to")),
@@ -35,12 +29,11 @@ INITIALIZATION_FUNCTIONS = (
 class Simulation(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
-    public_status = models.CharField(max_length=2, choices=PUBLIC_STATUS,
-                                     default='P')
     owner = models.ForeignKey(User)
+    state = models.ManyToManyField('State', blank=True, null=True)    
 
     def __unicode__(self):
-        return self.name
+        return self.name + ': ' + self.description
     
     class Meta:
         verbose_name = _('Simulation')
@@ -48,15 +41,20 @@ class Simulation(models.Model):
         ordering = ['name',]    
 
 class State(models.Model):
-    simulation = models.ForeignKey(Simulation)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, blank=True)
     initialization_function = models.CharField(max_length=3, 
                                                choices=INITIALIZATION_FUNCTIONS,
                                                default="0")
+    specified_initial_value = models.ManyToManyField('SpecifiedInitialValue', 
+                                                     blank=True, null=True)
+    initialization_function_parameter = models.ManyToManyField(
+                    'InitializationFunctionParameter', blank=True, null=True)
+    transition_record = models.ManyToManyField('TransitionRecord', 
+                                               blank=True, null=True)            
                 
     def __unicode__(self):
-        return self.name
+        return self.name + ': ' + self.description
     
     class Meta:
         verbose_name = _('State')
@@ -64,18 +62,19 @@ class State(models.Model):
         ordering = ['name',]
 
 class SpecifiedInitialValue(models.Model):
-    state = models.ForeignKey(State)
     description = models.CharField(max_length=300, blank=True)
     value = models.FloatField()
     probability = models.FloatField()
     
+    def __unicode__(self):
+        return unicode(self.pk) + ': ' + self.description
+    
     class Meta:
         verbose_name = _('Initial value for a state')
         verbose_name_plural = _('Initial values for states')
-        ordering = ['state', 'value', 'probability',]
+        ordering = ['value', 'probability',]
 
 class InitializationFunctionParameter(models.Model):
-    state = models.ForeignKey(State)
     description = models.CharField(max_length=300, blank=True)
     position = models.PositiveIntegerField(default=0)    
     value = models.FloatField()
@@ -83,10 +82,9 @@ class InitializationFunctionParameter(models.Model):
     class Meta:
         verbose_name = _('Parameter for initialization function')
         verbose_name_plural = _('Parameters for initialization functions')
-        ordering = ['state', 'position',]
+        ordering = ['position',]
     
 class TransitionRecord(models.Model):
-    state = models.ForeignKey(State)
     description = models.CharField(max_length=200, blank=True)
     position = models.PositiveIntegerField(default=0)
 
@@ -101,17 +99,16 @@ class TransitionRecord(models.Model):
     probability_normalize_function = models.CharField(max_length=2, 
                                                     choices=NORMALIZE_FUNCTIONS)
 
+    entry = models.ManyToManyField('Entry', blank=True, null=True)
     def __unicode__(self):
-        return self.state.name + ':' + unicode(self.id) + ' - ' + \
-            self.description
+        return self.description
             
     class Meta:
-        verbose_name = _('Transition Record')
-        verbose_name_plural = _('Transition Records')
-        ordering = ['state', 'position',]
+        verbose_name = _('State Transition')
+        verbose_name_plural = _('State Transition')
+        ordering = ['position',]
 
 class Entry(models.Model):
-    transition_record = models.ForeignKey(TransitionRecord)
     description = models.CharField(max_length=200, blank=True)
     position = models.PositiveIntegerField(default=0)    
     state = models.ForeignKey(State)
@@ -120,11 +117,10 @@ class Entry(models.Model):
     upper = models.FloatField(blank=True, null=True)
 
     def __unicode__(self):
-        return unicode(self.transition_record) + ':' + unicode(self.id) + ' - ' +\
-            self.description
+        return self.name + ': ' + self.description
 
     class Meta:
-        verbose_name = _('Entry')
-        verbose_name_plural = ('Entries')
-        ordering = ['transition_record', 'position',]
+        verbose_name = _('Condition')
+        verbose_name_plural = ('Conditions')
+        ordering = [ 'position',]
         
